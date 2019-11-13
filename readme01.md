@@ -1,9 +1,8 @@
-Copied from first post to the Forum. Needs review.
+From post to the Forum.
 
-# ClientArea painting problem when MainMenu wraps/unwraps
+## ClientArea painting problem when MainMenu wraps/unwraps
 
 The goal:
-
 - Maximize ClientHeight, but keep in control of aspect ratio of ClientArea.
 - Height should be Screen.WorkAreaHeight.
 - Width should be either Portrait (smaller, 800) or Landscape (larger, 1000).
@@ -25,9 +24,9 @@ Odd:
 - Missing space to grow the window is another part of the problem?
 
 Usage:
-  Press buttons in order given below...
+- Press buttons in order given below...
 
-Problem cases:
+### Problem cases
 
 a) Reset, Portrait, Landscape:
 - Black (unpainted) area at the bottom edge.
@@ -39,19 +38,20 @@ b) Reset, Button2, Button1:
 c) Reset, Landscape, Button1, Landscape:
 - Window too big, bottom edge behind task bar.
 
-These cases work as expected:
+### God cases
 
 d) Reset, Portrait
+
 e) Reset, Landscape
+
 f) Reset, Button 1 (like Portrait but via using Height property)
+
 g) Reset, Button 2 (like Landscape but via using Height property)
 
 Steps:
 - In new, empty FMX project
 - rename Form to FormMain
-- paste test code
+- paste test code (from forum post)
 - connect FormCreate, FormDestroy, FormKeyUp
 - run
 - hit keys instead of clicking buttons.
-
-> For attached test code see Delphi-Praxis forum.

@@ -1,4 +1,4 @@
-Noted while testing, and posted to the Forum, 06.11.2019.
+> Noted while testing, and posted to the Forum, 06.11.2019.
 
 Program changes:
 - Added OnPaint handler, in which I record LastPaintRect: TRectF.
@@ -29,18 +29,15 @@ Actual:
 - Window.Height does not change, ok
 - MainMenu wraps and uses more space, ok
 - ClientHeight property value remains the same, wrong! ( = PerceivedClientHeight)
-- 'PerceivedClientHeight' is too big in this case.
+- *PerceivedClientHeight* is too big in this case.
 - Content is drawn y-distorted, condensed.
 - Scaling factor seems to be ActualClientHeight/PerceivedClientHeight.
 - Black unpainted strip appears
+
+### Discussion
 
 Delphi sometimes gets behind the reality in terms of what it thinks ClientHeight is right now, and then the painting gets distorted.
 
 I have a situation in my real App, where I drop Images to a DropTarget and then set ClientWidth and ClientHeight to match the Image size. Sometimes I need to drag the same Image up to three times to get good result.
 
 Again, this only happens when MainMenu.Height (not a property) changes.
-
-Eventually I will build a minimal test case for reporting.
-
-How can you determine the actual Height of the MainMenu?
-How can you know if MainMenu wraps?
