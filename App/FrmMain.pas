@@ -35,6 +35,7 @@ type
     FScale: single;
     FMaxClientHeight: Integer;
     WantNormal: Boolean;
+    WantFormula: Boolean;
     ReportCounter: Integer;
     procedure GotoLandscape;
     procedure GotoPortrait;
@@ -104,7 +105,7 @@ begin
   s := Handle.Scale;
   h := Height;
   ch := ClientHeight;
-  FMaxClientHeight := Screen.WorkAreaHeight - Round(s *(h - ch));
+  FMaxClientHeight := Screen.WorkAreaHeight - Round(s * (h - ch));
   FMaxClientHeight := Round(FMaxClientHeight / s);
 end;
 
@@ -312,6 +313,11 @@ begin
     else
       InitMenu;
   end
+  else if KeyChar = 'f' then
+  begin
+    WantFormula := not WantFormula;
+    UpdateReport;
+  end
   else if KeyChar = 'g' then
   begin
     WantNormal := not WantNormal;
@@ -359,7 +365,7 @@ end;
 procedure TFormMain.UpdateReport;
 var
   scale: single;
-  h:Integer;
+  h: Integer;
   ch: Integer;
   wah: Integer;
   MaxClientHeight: Integer;
@@ -370,7 +376,7 @@ begin
   h := Height;
   ch := ClientHeight;
   wah := Screen.WorkAreaHeight;
-  MaxClientHeight := Screen.WorkAreaHeight - Round(scale *(h - ch));
+  MaxClientHeight := Screen.WorkAreaHeight - Round(scale * (h - ch));
   mch := Round(MaxClientHeight / scale);
 
   { ClientHeight := mch; // this is the intended use of mch }
@@ -384,17 +390,19 @@ begin
   ML.Add(Format('Handle.Scale = %.1f = scale', [scale]));
   ML.Add(Format('Screen.WorkAreaHeight = %d = wah', [wah]));
   ML.Add(Format('MaxClientHeight = %d', [MaxClientHeight]));
+  ML.Add(Format('mch = MaxClientHeight / scale = %d', [mch]));
   ML.Add('');
   ML.Add(Format('Screen-W-H = (%d, %d)', [Screen.Width, Screen.Height]));
   ML.Add(Format('(Form)-W-H = (%d, %d)', [Width, Height]));
   ML.Add(Format('Client-W-H = (%d, %d)', [ClientWidth, ClientHeight]));
 
-  ML.Add('');
-  ML.Add(Format('MaxClientHeight :=  wah - Round(scale * (h - ch));', []));
-  ML.Add(Format('           %d := %d - Round(%.1f * (%d - %d));',
-    [MaxClientHeight, wah, scale, h, ch]));
-  ML.Add('');
-  ML.Add(Format('mch = MaxClientHeight / scale = %d', [mch]));
+  if WantFormula then
+  begin
+    ML.Add('');
+    ML.Add(Format('MaxClientHeight :=  wah - Round(scale * (h - ch));', []));
+    ML.Add(Format('           %d := %d - Round(%.1f * (%d - %d));',
+      [MaxClientHeight, wah, scale, h, ch]));
+  end;
 
   UpdateMemo;
 end;
@@ -438,7 +446,7 @@ begin
   if WindowState = TWindowState.wsMaximized then
     WindowState := TWindowState.wsNormal;
 
-  GotoNormal;
+  GotoNormal; // Workaround
   if Screen.Width > Screen.Height then
   begin
     // normal screen
@@ -449,7 +457,7 @@ begin
   else
   begin
     // portrait screen
-    Width := Screen.WorkAreaWidth;
+    Width := Round(Screen.WorkAreaWidth / FScale);
     ClientHeight := Round(ClientWidth * 4 / 3);
     Left := 0;
     Top := 0;
@@ -473,7 +481,7 @@ begin
   else
   begin
     // portrait screen
-    Width := Screen.WorkAreaWidth;
+    Width := Round(Screen.WorkAreaWidth / FScale);
     ClientHeight := Round(ClientWidth);
     Left := 0
   end;
@@ -488,7 +496,6 @@ end;
 
 procedure TFormMain.UpdateMemo;
 begin
-  { Memo is a component on the form }
   if Memo <> nil then
     Memo.Text := ML.Text;
 

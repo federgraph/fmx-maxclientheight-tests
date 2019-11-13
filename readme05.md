@@ -19,7 +19,6 @@ These value are meant to be bigger then the Height of the Screen.
 
 - you hit key e.
 - then you drag the right border of the window to change the width.
-- then hit key e again.
 - repeat.
 
 The problem or a slightly different version of the problem will show.
@@ -49,8 +48,8 @@ Again, you hit a keyboard key, 0, 1, 6, 7, 8, 9.
 
 This should yield a square ClientArea, usually without problems.
 
-But if it get too big, then there might be a problem (bug).
+But if it gets too big, then there might be a problem (bug).
 
 On a normal HD-Screen (1920, 1080) you can have a ClientHeight of 900 pixels.
 
-But on a Surface table ClientHeight assignment of 900 may already be too big.
+But on a Surface tablet ClientHeight assignment of 900 may already be too big.
