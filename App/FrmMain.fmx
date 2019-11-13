@@ -2,25 +2,28 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 480
-  ClientWidth = 640
+  ClientHeight = 500
+  ClientWidth = 600
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnKeyUp = FormKeyUp
+  OnResize = FormResize
   DesignerMasterStyle = 0
-  object Button1: TButton
-    Position.X = 48.000000000000000000
-    Position.Y = 32.000000000000000000
+  object MaxBtn: TButton
+    Position.X = 40.000000000000000000
+    Position.Y = 24.000000000000000000
     TabOrder = 0
-    Text = 'Button1'
-    OnClick = Button1Click
+    Text = 'Max'
+    OnClick = MaxBtnClick
   end
-  object Button2: TButton
-    Position.X = 144.000000000000000000
-    Position.Y = 32.000000000000000000
-    TabOrder = 2
-    Text = 'Button2'
-    OnClick = Button2Click
+  object ResetBtn: TButton
+    Position.X = 128.000000000000000000
+    Position.Y = 24.000000000000000000
+    TabOrder = 1
+    Text = 'Reset'
+    OnClick = ResetBtnClick
   end
 end
