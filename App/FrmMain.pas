@@ -211,7 +211,7 @@ end;
 procedure TFormMain.MaxBtnClick(Sender: TObject);
 begin
   Top := 0;
-  Height := Screen.WorkAreaHeight;
+  Height := Round(Screen.WorkAreaHeight / FScale);
 end;
 
 procedure TFormMain.ResetBtnClick(Sender: TObject);
@@ -313,6 +313,27 @@ begin
     else
       InitMenu;
   end
+  else if KeyChar = '&' then
+  begin
+    if Rectangle <> nil then
+      FreeAndNil(Rectangle)
+    else
+      InitRectangle;
+  end
+  else if KeyChar = '$' then
+  begin
+    if MemoText <> nil then
+    begin
+      FreeAndNil(MemoText);
+      InitMemo;
+    end
+    else
+    begin
+      FreeAndNil(Memo);
+      InitMemoText;
+    end;
+    UpdateReport;
+  end
   else if KeyChar = 'f' then
   begin
     WantFormula := not WantFormula;
@@ -360,6 +381,8 @@ begin
   ML.Add('');
   ML.Add('m = toggle Menu');
   ML.Add('g = toggle WantNormal');
+  ML.Add('$ = toggle Memo');
+  ML.Add('& = toggle Rectangle');
 end;
 
 procedure TFormMain.UpdateReport;
@@ -389,6 +412,9 @@ begin
   ML.Add('');
   ML.Add(Format('Handle.Scale = %.1f = scale', [scale]));
   ML.Add(Format('Screen.WorkAreaHeight = %d = wah', [wah]));
+//  ML.Add(Format('Screen.WorkAreaWidth = %d', [Screen.WorkAreaWidth]));
+//  ML.Add(Format('Screen.WorkAreaTop = %d', [Screen.WorkAreaTop]));
+//  ML.Add(Format('Screen.WorkAreaLeft = %d', [Screen.WorkAreaLeft]));
   ML.Add(Format('MaxClientHeight = %d', [MaxClientHeight]));
   ML.Add(Format('mch = MaxClientHeight / scale = %d', [mch]));
   ML.Add('');
