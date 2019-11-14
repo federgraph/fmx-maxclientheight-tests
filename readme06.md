@@ -53,3 +53,9 @@ Notice that I have resized the Window manually to the max, it is 20 pixels large
 - What do you think about Screen.WorkAreaHeight?
 - Is this the best thing to use?
 - How should I compute the maximum of ClientHeight that can be visible on a given screen?
+
+### Note 1
+
+Found out that, if you change the rotation of the form on the Surface tablet, it does not update.
+If you change the taskbar mode, auto hiding or not, it does not update either.
+Any change is only reflected after restart of app.

@@ -313,7 +313,7 @@ begin
     else
       InitMenu;
   end
-  else if KeyChar = '&' then
+  else if KeyChar = '§' then
   begin
     if Rectangle <> nil then
       FreeAndNil(Rectangle)
@@ -370,9 +370,9 @@ begin
   ML.Add('');
   ML.Add('0 = MaxClientHeight Square');
   ML.Add('1 = MaxClientHeight-1 Square');
-  ML.Add('6, 7, 8, 9 = square test (600, 600), (700, 700), ... ');
-  ML.Add('a = 1200 square');
-  ML.Add('b = 1600 square');
+  ML.Add('6 = ( 600,  600)');
+  ML.Add('a = (1200, 1200)');
+  ML.Add('b = (1600, 1600)');
   ML.Add('e = (MaxClientHeight, MaxClientHeight * 2)');
   ML.Add('');
   ML.Add('a, b test = toggle between 1200 square and 1600 square');
@@ -382,7 +382,7 @@ begin
   ML.Add('m = toggle Menu');
   ML.Add('g = toggle WantNormal');
   ML.Add('$ = toggle Memo');
-  ML.Add('& = toggle Rectangle');
+  ML.Add('§ = toggle Rectangle');
 end;
 
 procedure TFormMain.UpdateReport;
@@ -410,17 +410,18 @@ begin
   ML.Add(Format('ReportCounter = %d', [ReportCounter]));
   ML.Add('WantNormal = ' + BoolStr[WantNormal]);
   ML.Add('');
-  ML.Add(Format('Handle.Scale = %.1f = scale', [scale]));
-  ML.Add(Format('Screen.WorkAreaHeight = %d = wah', [wah]));
-//  ML.Add(Format('Screen.WorkAreaWidth = %d', [Screen.WorkAreaWidth]));
-//  ML.Add(Format('Screen.WorkAreaTop = %d', [Screen.WorkAreaTop]));
-//  ML.Add(Format('Screen.WorkAreaLeft = %d', [Screen.WorkAreaLeft]));
-  ML.Add(Format('MaxClientHeight = %d', [MaxClientHeight]));
-  ML.Add(Format('mch = MaxClientHeight / scale = %d', [mch]));
+  ML.Add(Format('Screen.WorkAreaHeight = %d', [Screen.WorkAreaHeight]));
+  ML.Add(Format('Screen.WorkAreaWidth = %d', [Screen.WorkAreaWidth]));
+  ML.Add(Format('Screen.WorkAreaTop = %d', [Screen.WorkAreaTop]));
+  ML.Add(Format('Screen.WorkAreaLeft = %d', [Screen.WorkAreaLeft]));
   ML.Add('');
   ML.Add(Format('Screen-W-H = (%d, %d)', [Screen.Width, Screen.Height]));
   ML.Add(Format('(Form)-W-H = (%d, %d)', [Width, Height]));
   ML.Add(Format('Client-W-H = (%d, %d)', [ClientWidth, ClientHeight]));
+  ML.Add('');
+  ML.Add(Format('Handle.Scale = %.1f', [scale]));
+  ML.Add(Format('MaxClientHeight = %d', [MaxClientHeight]));
+  ML.Add(Format('mch = MaxClientHeight / scale = %d', [mch]));
 
   if WantFormula then
   begin
@@ -483,6 +484,7 @@ begin
   else
   begin
     // portrait screen
+    { Problem: WorkAreaHeight does not change  when Orientation is changed }
     Width := Round(Screen.WorkAreaWidth / FScale);
     ClientHeight := Round(ClientWidth * 4 / 3);
     Left := 0;
