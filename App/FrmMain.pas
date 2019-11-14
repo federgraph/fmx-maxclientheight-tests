@@ -33,6 +33,7 @@ type
     ML: TStringList;
     fa: Integer;
     FScale: single;
+    OMaxClientHeight: Integer;
     FMaxClientHeight: Integer;
     WantNormal: Boolean;
     WantFormula: Boolean;
@@ -48,6 +49,8 @@ type
     function AddMenu(M: TMainMenu; Caption: string): TMenuItem;
     procedure InitItem(I: TMenuItem; fa: Integer);
     procedure InitMenu;
+    procedure UpdateWorkArea;
+    function RectToStr(R: TRect): String;
   protected
     procedure InitMCH;
     procedure InitHelpText;
@@ -68,9 +71,10 @@ implementation
 
 {$R *.fmx}
 
-//uses
-//  System.Math,
-//  FMX.Platform.Win;
+uses
+  System.Math,
+  FMX.Platform,
+  FMX.Platform.Win;
 
 const
   BoolStr: array[Boolean] of string = ('False', 'True');
@@ -84,10 +88,7 @@ begin
 
   FScale := Handle.Scale;
   InitMCH; // will set FMaxClientHeight
-
-//  InitMemo; //use TMemo for reporting
   InitMemoText; // use TText instead of TMemo
-
   Caption := 'press h for help';
 end;
 
@@ -105,8 +106,8 @@ begin
   s := Handle.Scale;
   h := Height;
   ch := ClientHeight;
-  FMaxClientHeight := Screen.WorkAreaHeight - Round(s * (h - ch));
-  FMaxClientHeight := Round(FMaxClientHeight / s);
+  OMaxClientHeight := Screen.WorkAreaHeight - Round(s * (h - ch));
+  FMaxClientHeight := Round(OMaxClientHeight / s);
 end;
 
 procedure TFormMain.InitMemoText;
@@ -313,6 +314,11 @@ begin
     else
       InitMenu;
   end
+  else if KeyChar = 'z' then
+  begin
+    UpdateWorkArea;
+    UpdateReport;
+  end
   else if KeyChar = '§' then
   begin
     if Rectangle <> nil then
@@ -386,49 +392,37 @@ begin
 end;
 
 procedure TFormMain.UpdateReport;
-var
-  scale: single;
-  h: Integer;
-  ch: Integer;
-  wah: Integer;
-  MaxClientHeight: Integer;
-  mch: Integer;
 begin
   Inc(ReportCounter);
-  scale := Handle.Scale;
-  h := Height;
-  ch := ClientHeight;
-  wah := Screen.WorkAreaHeight;
-  MaxClientHeight := Screen.WorkAreaHeight - Round(scale * (h - ch));
-  mch := Round(MaxClientHeight / scale);
 
-  { ClientHeight := mch; // this is the intended use of mch }
-  { mch is the actual MaxClientHeight to be used. }
+  InitMCH;
+//  UpdateWorkArea;
 
-  { ML is a TStringList }
   ML.Clear;
   ML.Add(Format('ReportCounter = %d', [ReportCounter]));
   ML.Add('WantNormal = ' + BoolStr[WantNormal]);
   ML.Add('');
   ML.Add(Format('Screen.WorkAreaHeight = %d', [Screen.WorkAreaHeight]));
   ML.Add(Format('Screen.WorkAreaWidth = %d', [Screen.WorkAreaWidth]));
-  ML.Add(Format('Screen.WorkAreaTop = %d', [Screen.WorkAreaTop]));
-  ML.Add(Format('Screen.WorkAreaLeft = %d', [Screen.WorkAreaLeft]));
+//  ML.Add(Format('Screen.WorkAreaTop = %d', [Screen.WorkAreaTop]));
+//  ML.Add(Format('Screen.WorkAreaLeft = %d', [Screen.WorkAreaLeft]));
   ML.Add('');
   ML.Add(Format('Screen-W-H = (%d, %d)', [Screen.Width, Screen.Height]));
   ML.Add(Format('(Form)-W-H = (%d, %d)', [Width, Height]));
   ML.Add(Format('Client-W-H = (%d, %d)', [ClientWidth, ClientHeight]));
   ML.Add('');
-  ML.Add(Format('Handle.Scale = %.1f', [scale]));
-  ML.Add(Format('MaxClientHeight = %d', [MaxClientHeight]));
-  ML.Add(Format('mch = MaxClientHeight / scale = %d', [mch]));
+  ML.Add(Format('Handle.Scale = %.1f', [FScale]));
+  ML.Add(Format('OMaxClientHeight = %d', [OMaxClientHeight]));
+  ML.Add(Format('FMaxClientHeight = %d', [FMaxClientHeight]));
 
   if WantFormula then
   begin
     ML.Add('');
-    ML.Add(Format('MaxClientHeight :=  wah - Round(scale * (h - ch));', []));
+    ML.Add('Screen.MultiDisplaySupported = ' + BoolStr[Screen.MultiDisplaySupported]);
+    ML.Add('Screen.WorkAreaRect = ' + RectToStr(Screen.WorkAreaRect));
+    ML.Add(Format('OMaxClientHeight :=  wah - Round(scale * (h - ch));', []));
     ML.Add(Format('           %d := %d - Round(%.1f * (%d - %d));',
-      [MaxClientHeight, wah, scale, h, ch]));
+      [OMaxClientHeight, Screen.WorkAreaHeight, FScale, Height, ClientHeight]));
   end;
 
   UpdateMemo;
@@ -529,6 +523,20 @@ begin
 
   if MemoText <> nil then
     MemoText.Text := ML.Text;
+end;
+
+procedure TFormMain.UpdateWorkArea;
+begin
+  Screen.UpdateDisplayInformation;
+  InitMCH;
+end;
+
+function TFormMain.RectToStr(R: TRect): string;
+begin
+  Result := '(' + Inttostr(R.Left) + ','
+                + Inttostr(R.Top) + ' x '
+                + Inttostr(R.Width) + ','
+                + Inttostr(R.Height) + ')';
 end;
 
 end.

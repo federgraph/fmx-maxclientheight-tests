@@ -59,3 +59,10 @@ Notice that I have resized the Window manually to the max, it is 20 pixels large
 Found out that, if you change the rotation of the form on the Surface tablet, it does not update.
 If you change the taskbar mode, auto hiding or not, it does not update either.
 Any change is only reflected after restart of app.
+
+### Note 2
+
+I need to call Screen.UpdateDisplayInformation manually,
+which resets the FWorkAreaRect,
+so that it will be updated the next time it is used.
+This can be done with key z.
