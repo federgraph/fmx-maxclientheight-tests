@@ -87,8 +87,8 @@ begin
   ML := TStringList.Create;
 
   FScale := Handle.Scale;
-  InitMCH; // will set FMaxClientHeight
-  InitMemoText; // use TText instead of TMemo
+  InitMCH;
+  InitMemoText;
   Caption := 'press h for help';
 end;
 
@@ -351,7 +351,6 @@ begin
     UpdateReport;
   end;
 
-//  UpdateReport;
 end;
 
 procedure TFormMain.FormResize(Sender: TObject);
@@ -396,7 +395,6 @@ begin
   Inc(ReportCounter);
 
   InitMCH;
-//  UpdateWorkArea;
 
   ML.Clear;
   ML.Add(Format('ReportCounter = %d', [ReportCounter]));
@@ -404,8 +402,6 @@ begin
   ML.Add('');
   ML.Add(Format('Screen.WorkAreaHeight = %d', [Screen.WorkAreaHeight]));
   ML.Add(Format('Screen.WorkAreaWidth = %d', [Screen.WorkAreaWidth]));
-//  ML.Add(Format('Screen.WorkAreaTop = %d', [Screen.WorkAreaTop]));
-//  ML.Add(Format('Screen.WorkAreaLeft = %d', [Screen.WorkAreaLeft]));
   ML.Add('');
   ML.Add(Format('Screen-W-H = (%d, %d)', [Screen.Width, Screen.Height]));
   ML.Add(Format('(Form)-W-H = (%d, %d)', [Width, Height]));
@@ -430,6 +426,11 @@ end;
 
 procedure TFormMain.GotoNormal;
 begin
+  if WindowState = TWindowState.wsMaximized then
+    WindowState := TWindowState.wsNormal;
+
+  Screen.UpdateDisplayInformation;
+
   if WantNormal then
   begin
     Top := 100;
@@ -441,73 +442,54 @@ end;
 
 procedure TFormMain.GotoLandscape;
 begin
-  if WindowState = TWindowState.wsMaximized then
-    WindowState := TWindowState.wsNormal;
-
-//  GotoNormal;
+  GotoNormal;
   if Screen.Width > Screen.Height then
   begin
-    // normal screen
     Height := Round(Screen.WorkAreaHeight / FScale);
     ClientWidth := Round(ClientHeight * 4 / 3);
     Top := 0;
   end
   else
   begin
-    // portrait screen
     Width := Round(Screen.WorkAreaWidth / FScale);
     ClientHeight := Round(ClientWidth * 3 / 4);
     Left := 0;
   end;
-//  FormResizeEnd(nil);
 end;
 
 procedure TFormMain.GotoPortrait;
 begin
-  if WindowState = TWindowState.wsMaximized then
-    WindowState := TWindowState.wsNormal;
-
-  GotoNormal; // Workaround
+  GotoNormal;
   if Screen.Width > Screen.Height then
   begin
-    // normal screen
     Height := Round(Screen.WorkAreaHeight / FScale);
     ClientWidth := Round(ClientHeight * 3 / 4);
     Top := 0;
   end
   else
   begin
-    // portrait screen
-    { Problem: WorkAreaHeight does not change  when Orientation is changed }
     Width := Round(Screen.WorkAreaWidth / FScale);
     ClientHeight := Round(ClientWidth * 4 / 3);
     Left := 0;
     Top := 0;
   end;
-//  FormMain.FormResizeEnd(nil);
 end;
 
 procedure TFormMain.GotoSquare;
 begin
-  if WindowState = TWindowState.wsMaximized then
-    WindowState := TWindowState.wsNormal;
-
   GotoNormal;
   if Screen.Width > Screen.Height then
   begin
-    // normal screen
     Height := Round(Screen.WorkAreaHeight / FScale);
     ClientWidth := Round(ClientHeight);
     Top := 0;
   end
   else
   begin
-    // portrait screen
     Width := Round(Screen.WorkAreaWidth / FScale);
     ClientHeight := Round(ClientWidth);
     Left := 0
   end;
-//  FormResizeEnd(nil);
 end;
 
 procedure TFormMain.ShowHelp;
