@@ -72,9 +72,7 @@ implementation
 {$R *.fmx}
 
 uses
-  System.Math,
-  FMX.Platform,
-  FMX.Platform.Win;
+  System.Math;
 
 const
   BoolStr: array[Boolean] of string = ('False', 'True');
@@ -87,9 +85,17 @@ begin
   ML := TStringList.Create;
 
   FScale := Handle.Scale;
+{$ifdef MACOS}
+  FScale := 1.0;
+{$endif}
+
+
   InitMCH;
   InitMemoText;
   Caption := 'press h for help';
+
+  { RSP-20787 }
+  Position := TFormPosition.ScreenCenter;
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
@@ -99,15 +105,13 @@ end;
 
 procedure TFormMain.InitMCH;
 var
-  s: single;
   h:Integer;
   ch: Integer;
 begin
-  s := Handle.Scale;
   h := Height;
   ch := ClientHeight;
-  OMaxClientHeight := Screen.WorkAreaHeight - Round(s * (h - ch));
-  FMaxClientHeight := Round(OMaxClientHeight / s);
+  OMaxClientHeight := Screen.WorkAreaHeight - Round(FScale * (h - ch));
+  FMaxClientHeight := Round(OMaxClientHeight / FScale);
 end;
 
 procedure TFormMain.InitMemoText;
@@ -301,6 +305,8 @@ begin
     ClientWidth := 600;
   end
 
+  else if KeyChar = 'k' then Caption := 'k'
+  else if KeyChar = 'K' then Caption := 'K' // RSP-2766
   else if KeyChar = 't' then MoveTop0
   else if KeyChar = 'l' then GotoLandscape
   else if KeyChar = 'p' then GotoPortrait
@@ -407,7 +413,7 @@ begin
   ML.Add(Format('(Form)-W-H = (%d, %d)', [Width, Height]));
   ML.Add(Format('Client-W-H = (%d, %d)', [ClientWidth, ClientHeight]));
   ML.Add('');
-  ML.Add(Format('Handle.Scale = %.1f', [FScale]));
+  ML.Add(Format('Handle.Scale = %.1f', [Handle.Scale]));
   ML.Add(Format('OMaxClientHeight = %d', [OMaxClientHeight]));
   ML.Add(Format('FMaxClientHeight = %d', [FMaxClientHeight]));
 
@@ -416,7 +422,7 @@ begin
     ML.Add('');
     ML.Add('Screen.MultiDisplaySupported = ' + BoolStr[Screen.MultiDisplaySupported]);
     ML.Add('Screen.WorkAreaRect = ' + RectToStr(Screen.WorkAreaRect));
-    ML.Add(Format('OMaxClientHeight :=  wah - Round(scale * (h - ch));', []));
+    ML.Add(Format('OMaxClientHeight :=  wah - Round(FScale * (h - ch));', []));
     ML.Add(Format('           %d := %d - Round(%.1f * (%d - %d));',
       [OMaxClientHeight, Screen.WorkAreaHeight, FScale, Height, ClientHeight]));
   end;
@@ -431,6 +437,7 @@ begin
 
   Screen.UpdateDisplayInformation;
 
+  { workaround, because of RSP-26601 }
   if WantNormal then
   begin
     Top := 100;
